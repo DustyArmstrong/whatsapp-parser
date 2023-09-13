@@ -13,7 +13,7 @@ lines = []
 
 with open('output.csv', "w", errors='ignore') as file:
     csv_file = csv.writer(file)
-    csv_file.writerow(["Index", "Date", "Time", "Author", "Content"])
+    csv_file.writerow(["Index", "Date", "Time", "Author", "Content", "Message"])
     count = 1
     for line in chat:
         try:
@@ -22,11 +22,15 @@ with open('output.csv', "w", errors='ignore') as file:
             nameIndex = re.search(nameRegex, line)
             messageIndex = re.search(messageRegex, line)
             mediaParse = re.search("[0-9]{8}-[A-Z]{5}-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}.[a-z 0-9]{3}", messageIndex.group())
+            pdfParse = re.search("[0-9]{8}-.*.pdf", messageIndex.group())
             if mediaParse:
-                csv_file.writerow([count, dateIndex.group(), timeIndex.group(), nameIndex.group(), '=HYPERLINK("./media/' + mediaParse.group() + '", "SHARED FILE IN CHAT - CLICK TO VIEW")'])
+                csv_file.writerow([count, dateIndex.group(), timeIndex.group(), nameIndex.group(), '=HYPERLINK("./media/' + mediaParse.group() + '", "SHARED FILE IN CHAT - CLICK TO VIEW")', messageIndex.group()])
+                count = count + 1
+            elif pdfParse:
+                csv_file.writerow([count, dateIndex.group(), timeIndex.group(), nameIndex.group(), '=HYPERLINK("./media/' + pdfParse.group() + '", "SHARED FILE IN CHAT - CLICK TO VIEW")', messageIndex.group()])
                 count = count + 1
             else:
-                csv_file.writerow([count, dateIndex.group(), timeIndex.group(), nameIndex.group(), messageIndex.group()])
+                csv_file.writerow([count, dateIndex.group(), timeIndex.group(), nameIndex.group(), "", messageIndex.group()])
                 count = count + 1
         except AttributeError:
             line = line.strip("\n") 
