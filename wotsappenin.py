@@ -33,6 +33,9 @@ with open('output.csv', "w", errors='ignore') as file:
                 csv_file.writerow([count, dateIndex.group(), timeIndex.group(), nameIndex.group(), "", messageIndex.group()])
                 count = count + 1
         except AttributeError:
-            line = line.strip("\n") 
-            csv_file.writerow([count, "", "", "", str(line)])
-            count = count + 1
+            line = line.strip("\n")
+            if len(line) == 0:
+                pass
+            else:
+                csv_file.writerow(["", "", "", "", "", str(line)])
+                count = count + 1
